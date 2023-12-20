@@ -22,6 +22,7 @@
       <v-main>
         <v-container fluid>
         <v-row>
+          <v-row></v-row>
           <v-col cols="12" md="6">
             <v-row>
               <v-col cols="12" md="2">
@@ -34,15 +35,20 @@
             </v-row>
               <v-row> <v-col cols="12" md="10">
                 <v-textarea
-                  v-model="text1"
-                  label="Texto 1"
-                  placeholder="Ingresa el texto 1"
+                  v-model="texto"
+                  placeholder="Traduce aqui"
                   auto-grow
-                ></v-textarea>
+                  @input="reiniciarTemporizador"
+                  ></v-textarea>
               </v-col>
             </v-row>
           </v-col>
 
+          <v-btn icon @click="intercambiarIdiomas">
+        <v-icon>mdi-swap-horizontal</v-icon>
+      </v-btn>
+  
+          
           <v-col cols="12" md="6">
             <v-row>
               <v-col cols="12" md="2">
@@ -56,36 +62,76 @@
             <v-row>
               <v-col cols="12" md="10">
                 <v-textarea
-                  v-model="text2"
-                  label="Texto 2"
-                  placeholder="Ingresa el texto 2"
+                  disabled
+                  label="Traducción"
+                  v-model="translate"
+                  placeholder="Traducción"
                   auto-grow
                 ></v-textarea>
               </v-col>
             </v-row>
           </v-col>
         </v-row>
+        <button @click="traducir" >Traducir</button>
       </v-container>
       </v-main>
     </v-app>
   </template>
   
   <script>
-  export default {
+import axios from 'axios'
+export default {
     data() {
       return {
         drawer: false,
-        selectedLanguage: null,
-        languages: ["Español", "Embera"], // Puedes personalizar la lista de idiomas
-        text1: "",
-        text2: "",
+        selectedLanguage1: "Español",
+        selectedLanguage2: "Embera",
+        languages: ["Español", "Embera"], 
+        texto: "",
+        translate: "",
+        temporizador: null
       };
     },
     methods: {
       openUserMenu() {
         this.$router.push('/login')
       },
+
+      reiniciarTemporizador() {
+        clearTimeout(this.temporizador);
+        this.temporizador = setTimeout(() => {
+          this.traducir();
+        }, 1000)  
+      },
+
+      traducir() {
+        const paquete = 
+        {
+      idiom1: this.selectedLanguage1,
+      idiom2: this.selectedLanguage2,
+      texto: this.texto,}
+
+        axios.post(`http://127.0.0.1:5000//translate`, {paquete: paquete}) 
+        .then(response => {
+          this.translate = response.data.translate
+          console.log(this.translate)
+        })
+        .catch(error => {
+          console.error(error);
+        });
+      },
+      intercambiarIdiomas() {
+      const temp = this.selectedLanguage1;
+      this.selectedLanguage1 = this.selectedLanguage2;
+      this.selectedLanguage2 = temp;
+
+      const tempTexto = this.texto;
+      this.texto = this.translate;
+      this.translate = tempTexto;
+    }
     },
   };
   </script>
+
+  <style></style>
   

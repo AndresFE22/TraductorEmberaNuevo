@@ -11,7 +11,7 @@
               <v-card-text>
                 <v-form @submit.prevent="agregarPalabra">
                   <v-text-field v-model="espanol" label="Agregue palabra en español" required></v-text-field>
-                  <v-text-field v-model="wayuu" label="Agregue palabra en wayuunaiky" required></v-text-field>
+                  <v-text-field v-model="embera" label="Agregue palabra en embera" required></v-text-field>
                   <v-btn type="submit" color="teal">Guardar</v-btn>
                 </v-form>
               </v-card-text>
@@ -26,11 +26,12 @@
               </v-card-title>
               <v-card-text>
                 <v-data-table :headers="headers" :items="palabras" item-key="id" class="elevation-1">
-                  <template v-slot:items="props">
-                    <td>{{ props.item.espanol }}</td>
-                    <td>{{ props.item.wayuu }}</td>
-                  </template>
-                </v-data-table>
+                <template v-slot:items="props">
+                  <tr v-for="(palabra, index) in props.item" :key="index">
+                    <td>{{ palabra }}</td>
+                  </tr>
+                </template>
+              </v-data-table>
               </v-card-text>
             </v-card>
           </v-col>
@@ -40,53 +41,50 @@
   </template>
   
   <script>
-  export default {
+import axios from 'axios'
+
+export default {
     data() {
       return {
         espanol: "",
-        wayuu: "",
-        palabras: [], // Aquí se almacenarán las palabras obtenidas del backend
+        embera: "",
+        palabras: [], 
         headers: [
-          { text: "Español", value: "espanol" },
-          { text: "Wayuu", value: "wayuu" },
+          { text: "Español", value: 'espanol'},
+          { text: "Embera", value: 'embera' },
         ],
       };
     },
     methods: {
-      async agregarPalabra() {
-        // Lógica para agregar la palabra al backend
-        // Aquí puedes realizar una llamada a la API para agregar la palabra
-  
-        // Ejemplo: Supongamos que tienes una función en tu servicio que agrega la palabra
-        try {
-          await this.$servicioPalabras.agregarPalabra({
-            espanol: this.espanol,
-            wayuu: this.wayuu,
-          });
-  
-          // Actualizar la lista de palabras después de agregar una nueva
-          this.obtenerPalabras();
-          // Reiniciar los campos
-          this.espanol = "";
-          this.wayuu = "";
-        } catch (error) {
-          console.error("Error al agregar la palabra:", error);
-        }
+      agregarPalabra() {
+        const paquete = 
+        {
+      espanol: this.espanol,
+      embera: this.embera
+    }
+        axios.post(`http://127.0.0.1:5000/palabras`, { paquete: paquete }) 
+        .then(response => {
+          this.message = response.data.message
+          this.obtenerPalabras()
+          this.espanol = ""
+          this.embera = ""
+        })
+        .catch(error => {
+          console.error(error);
+        });
       },
-      async obtenerPalabras() {
-        // Lógica para obtener palabras del backend
-        // Aquí puedes realizar una llamada a la API para obtener la lista de palabras
-  
-        // Ejemplo: Supongamos que tienes una función en tu servicio que obtiene las palabras
-        try {
-          this.palabras = await this.$servicioPalabras.obtenerPalabras();
-        } catch (error) {
-          console.error("Error al obtener las palabras:", error);
-        }
+      obtenerPalabras() {
+        axios.get(`http://127.0.0.1:5000/obtener`) 
+        .then(response => {
+          this.palabras = response.data || [];
+          console.log(this.palabras)
+        })
+        .catch(error => {
+          console.error(error);
+        });
       },
     },
     created() {
-      // Al cargar el componente, obtener la lista de palabras
       this.obtenerPalabras();
     },
   };
