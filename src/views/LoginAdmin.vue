@@ -22,9 +22,10 @@
                     <v-row>
                       <v-col cols="12" md="8">
                         <v-card-text class="mt-12">
-                          <h1
-                            class="text-center display-2 orange--text text--darken-3"
-                          >Iniciar Sesión</h1>
+                          <h2
+                            class="text-center orange--text text--darken-3"
+                
+                          >Ingresar</h2>
   
                           <v-form>
                             <span class="mdi mdi-account"></span>
@@ -40,15 +41,21 @@
                               id="password"
                               label="Contraseña"
                               name="Contraseña"
-                              type="password"
+                              :type="showPassword ? 'text' : 'password'"
                               color="orange darken-3"
-                              v-model="password"  
+                              v-model="password"
+                              append-icon="mdi-eye"
+                              @click:append="togglePasswordVisibility"
+
                             />
                           </v-form>
                         </v-card-text>
                         <div class="text-center mt-3">
-                          <v-btn rounded color="orange darken-1" dark @click="signIn">Inciar Sesión</v-btn>
+                          <v-btn rounded color="orange darken-1" dark @click="signIn">Iniciar Sesión</v-btn>
                         </div>
+                        <br>
+                        <div v-if="msge" class="mensaje">{{ msge }}</div>
+
                       </v-col>
                       <v-col cols="12" md="4" class="custom-background rounded-lg">
                         <v-card-text class="brown--text text--darken-3 mt-16">
@@ -76,7 +83,10 @@
     data: () => ({
       step: 1,
       username: "",
-      password: ""
+      password: "", 
+      showPassword: false,
+      msge: ""
+
       
     }),
     props: {
@@ -86,15 +96,23 @@
     signIn() {
       // Verificar si las credenciales son correctas
       if (this.username === "admin" && this.password === "admin123") {
-        // Redirigir a la ruta deseada
+        localStorage.setItem('isLoggedIn', 'true')
         this.$router.push('/panelConfiguracion');
+        this.obtenerPalabras()
       } else {
         // Lógica para manejar credenciales incorrectas (puedes mostrar un mensaje de error, etc.)
-        console.log("Credenciales incorrectas");
+        this.msge = "Credenciales incorrectas";
+        setTimeout(() => {
+            this.msge = "";
+          }, 2000
+          );
       }
     },
     openUserMenu(){
       this.$router.push('/');
+    },
+    togglePasswordVisibility() {
+      this.showPassword = !this.showPassword;
     }
     
   },
@@ -102,11 +120,22 @@
   </script>
 
 <style scoped>
+
+@import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600;700&family=Raleway:wght@600&family=Roboto:wght@300;900&family=Source+Code+Pro:wght@700&display=swap');
 .background {
 background-image: url('../assets/indigena2.jpg');
 background-size: cover;
 height: 100vh;
 }
+
+* {
+    font-family: 'Source code pro', monospace;
+  }
+
+  h2 {
+    font-family: 'Source code pro', monospace;
+    font-size: 25pt;
+  }
 
 
 .custom-background {
@@ -117,6 +146,15 @@ height: 100vh;
   .custom-background {
     background: url('../assets/5.png') center center/cover no-repeat;
   }
+
+}
+
+.mensaje {
+  background-color: rgb(255, 51, 51);
+  color: white;
+  padding: 10px;
+  border-radius: 20px;
+  text-align: center;
 
 }
 </style>

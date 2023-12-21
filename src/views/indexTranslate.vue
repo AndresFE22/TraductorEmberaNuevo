@@ -53,7 +53,6 @@
             </v-row>
           </v-col>
 
-
           
           <v-col cols="12" md="6">
             <v-row>
@@ -141,8 +140,18 @@ export default {
   },
     methods: {
       openUserMenu() {
-        this.$router.push('/login')
-      },
+        const isLoggedIn = localStorage.getItem('isLoggedIn');
+
+        if (isLoggedIn) {
+        this.$router.push('/panelConfiguracion'); }
+        else {
+          this.$router.push('/login');
+        }
+    
+},
+
+
+
 
       reiniciarTemporizador() {
         clearTimeout(this.temporizador);
@@ -158,7 +167,7 @@ export default {
       idiom2: this.selectedLanguage2,
       texto: this.texto,}
 
-        axios.post(`http://127.0.0.1:5000//translate`, {paquete: paquete}) 
+        axios.post(`https://cuentaapi.pythonanywhere.com/translate`, {paquete: paquete}) 
         .then(response => {
           this.translate = response.data.translate
           console.log(this.translate)
@@ -181,6 +190,15 @@ export default {
   </script>
 
   <style>
+
+@import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600;700&family=Raleway:wght@600&family=Roboto:wght@300;900&family=Source+Code+Pro:wght@700&display=swap');
+
+
+* {
+    font-family: 'Source code pro', monospace;
+    font-weight: 700;
+  }
+
 .textarea {
   background-color: rgb(255, 255, 255);
   border-radius: 20px;
