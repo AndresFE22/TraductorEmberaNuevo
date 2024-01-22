@@ -104,7 +104,7 @@ export default {
       espanol: this.espanol,
       embera: this.embera
     }
-        axios.post(`http://edutlasdeveloper.pythonanywhere.com/palabras`, { paquete: paquete }) 
+        axios.post(`https://edutlasdeveloper.pythonanywhere.com/palabras`, { paquete: paquete }) 
         .then(response => {
           this.message = response.data.msge
           this.obtenerPalabras()
@@ -122,7 +122,7 @@ export default {
         });
       },
       obtenerPalabras() {
-        axios.get(`http://edutlasdeveloper.pythonanywhere.com/obtener`) 
+        axios.get(`https://edutlasdeveloper.pythonanywhere.com/obtener`) 
         .then(response => {
           this.palabras = response.data || [];
           console.log(this.palabras)
