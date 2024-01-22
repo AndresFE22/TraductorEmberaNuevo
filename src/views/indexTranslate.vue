@@ -167,7 +167,7 @@ export default {
       idiom2: this.selectedLanguage2,
       texto: this.texto,}
 
-        axios.post(`https://cuentaapi.pythonanywhere.com/translate`, {paquete: paquete}) 
+        axios.post(`http://edutlasdeveloper.pythonanywhere.com/translate`, {paquete: paquete}) 
         .then(response => {
           this.translate = response.data.translate
           console.log(this.translate)
